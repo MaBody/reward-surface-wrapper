@@ -1,0 +1,10 @@
+name: rs-wrapper
+channels:
+  - conda-forge
+dependencies:
+  - python >=3.10, <3.11
+  - numpy
+  - pytorch
+  - matplotlib
+  - plotly
+  - gym
