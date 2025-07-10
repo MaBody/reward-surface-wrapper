@@ -13,6 +13,6 @@ class StableBaselinesWrapper(AgentWrapper):
         # returns weights as a list of (torch|numpy) arrays
         pass
 
-    def estimate_loss(self, n_steps: int) -> float:
+    def estimate_loss(self, n_steps: int, **kwargs) -> float:
         # evaluates policy for n_steps and returns loss estimate
         pass
