@@ -1,0 +1,25 @@
+defaults:
+  - algorithm: ppo
+  - platform: local
+  - _self_
+
+env_name: CartPole-v1
+total_steps: 100000
+total_epochs: 300
+device: cpu
+
+wandb:
+  use: True
+  project: rl_test
+  group: local
+
+seed: ???
+n_steps: ???
+
+hydra:
+  mode: MULTIRUN
+  sweeper:
+    params:
+      seed: 0, 1, 2  # starts 3 jobs sequentially, overwrites seed value
+      n_steps: 10, 100, 1000
+
