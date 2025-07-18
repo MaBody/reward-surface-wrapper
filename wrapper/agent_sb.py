@@ -1,8 +1,8 @@
 from abc import ABC
 from numpy.typing import ArrayLike
 from wrapper.agent import AgentWrapper
+from wrapper.training import evaluate_policy_limited
 from stable_baselines3.common.base_class import BaseAlgorithm
-from stable_baselines3.common.evaluation import evaluate_policy
 import torch
 import gymnasium as gym
 import numpy as np
@@ -39,25 +39,18 @@ class SB3Wrapper(AgentWrapper):
         env: str | gym.Env = kwargs["env"]
         if isinstance(env, str):
             env = gym.make(env)
-        n_steps = kwargs["n_steps"]
-        render = kwargs.get("render")
-        n_episodes = kwargs.get("n_episodes", 1)
+        n_eval_steps = kwargs["n_eval_steps"]
+        n_eval_episodes = kwargs.get("n_eval_episodes", 1)
 
-        obs, _ = env.reset()
-        total_reward = 0.0
-
-        episode_rewards, episode_lengths = evaluate_policy(
+        _ = env.reset()
+        ep_rewards, ep_lengths = evaluate_policy_limited(
             self.agent,
             env,
-            n_eval_episodes=n_episodes,
-            render=render,
-            deterministic=True,
-            return_episode_rewards=True,
+            n_eval_episodes,
+            n_eval_steps,
         )
-        mean_reward, std_reward = np.mean(episode_rewards), np.std(episode_rewards)
-        mean_ep_length, std_ep_length = np.mean(episode_lengths), np.std(
-            episode_lengths
-        )
+        mean_reward, std_reward = np.mean(ep_rewards), np.std(ep_rewards)
+        mean_ep_length, std_ep_length = np.mean(ep_lengths), np.std(ep_lengths)
 
         # for _ in range(n_episodes):
         #     epoch_reward = 0.0
