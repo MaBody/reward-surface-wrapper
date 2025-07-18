@@ -8,7 +8,7 @@ setup(
     author_email="mattisbodynek@gmail.com",
     packages=["wrapper"],  # same as name
     install_requires=[
-        "pytorch",
+        "torch",
         "numpy",
         "plotly",
     ],
