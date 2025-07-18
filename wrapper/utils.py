@@ -1,5 +1,4 @@
 import os
-import torch
 import argparse
 import json
 import numpy as np
@@ -23,35 +22,36 @@ def initialize_directions(
 
 def filter_normalize(param: ArrayLike):
     # TODO: verify with loss landscapes code
-    ndims = len(param.shape)
+    _param = np.array(param)
+    ndims = len(_param.shape)
     if ndims == 1 or ndims == 0:
         # don't do any random direction for scalars
-        return torch.zeros_like(param)
+        return np.zeros_like(_param)
     elif ndims == 2:
-        direction = torch.normal(0, 1, size=param.shape)
-        direction /= torch.sqrt(
-            torch.sum(torch.square(direction), axis=0, keepdims=True)
+        direction = np.random.normal(size=_param.shape)
+        direction /= np.sqrt(
+            np.sum(np.square(direction), axis=0, keepdims=True)
         )
-        direction *= torch.sqrt(torch.sum(torch.square(param), axis=0, keepdims=True))
+        direction *= np.sqrt(np.sum(np.square(_param), axis=0, keepdims=True))
         return direction
     elif ndims == 4:
-        direction = torch.normal(0, 1, size=param.shape)
-        direction /= torch.sqrt(
-            torch.sum(torch.square(direction), axis=(0, 1, 2), keepdims=True)
+        direction = np.random.normal(size=_param.shape)
+        direction /= np.sqrt(
+            np.sum(np.square(direction), axis=(0, 1, 2), keepdims=True)
         )
-        direction *= torch.sqrt(
-            torch.sum(torch.square(param), axis=(0, 1, 2), keepdims=True)
+        direction *= np.sqrt(
+            np.sum(np.square(_param), axis=(0, 1, 2), keepdims=True)
         )
         return direction
     else:
         raise AssertionError(
-            f"only 1, 2, 4 dimentional filters allowed, got {param.shape}"
+            f"only 1, 2, 4 dimentional filters allowed, got {_param.shape}"
         )
 
 
 def initialize_offsets(grid_size: int):
     n = grid_size // 2
-    offsets = (np.arange(0, grid_size) - n) / n
+    offsets = (np.arange(0, grid_size) - n) / n 
     return offsets
 
 

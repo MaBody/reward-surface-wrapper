@@ -67,8 +67,8 @@ class AgentWrapper(ABC):
     def _compute_point(self, offset_pair: tuple[float]) -> float:
         weights = []
         for p, p_dir_0, p_dir_1 in zip(self.get_weights(), *self.directions):
-            # p_alt = p + p_dir_0 * offset_pair[0] + p_dir_1 * offset_pair[1]
-            p_alt = np.copy(p)
+            p_alt = p + p_dir_0 * offset_pair[0] + p_dir_1 * offset_pair[1]
+            # p_alt = np.copy(p)
             weights.append(p_alt)
         agent_alt = self.initialize(weights)
 

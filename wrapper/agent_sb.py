@@ -6,7 +6,7 @@ from stable_baselines3.common.base_class import BaseAlgorithm
 import torch
 import gymnasium as gym
 import numpy as np
-
+import tempfile
 
 class SB3Wrapper(AgentWrapper):
     def __init__(self, agent: BaseAlgorithm):
@@ -14,15 +14,24 @@ class SB3Wrapper(AgentWrapper):
 
     def initialize(self, weights: list[ArrayLike]) -> "SB3Wrapper":
         """Makes new agent with provided weights"""
+        agent_cls = self.agent.__class__
+
+        # Create temporary file
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.zip') as tmp_file:
+            temp_path = tmp_file.name
+            # Save and load
+            self.agent.save(temp_path.replace('.zip', ''))
+            new_agent = agent_cls.load(temp_path)
+
         # Convert list of arrays to a single flat vector and load into policy
         vector = torch.cat([torch.as_tensor(w).flatten() for w in weights])
-        self.agent.policy.load_from_vector(vector)
+        new_agent.policy.load_from_vector(vector)
         return self
 
     def get_weights(self) -> list[ArrayLike]:
         # Returns the parameters as a list of numpy arrays (one per parameter tensor)
         return [
-            param.detach()
+            param.detach().cpu().numpy()
             for param in self.agent.policy.parameters()
             # param.detach().cpu().numpy() for param in self.agent.policy.parameters()
         ]
